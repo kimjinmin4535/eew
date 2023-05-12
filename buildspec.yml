@@ -20,4 +20,4 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: '/app'
+  base-directory: 'C:/Users/USER/Desktop/d'
