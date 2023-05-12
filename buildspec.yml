@@ -1,30 +1,23 @@
 version: 0.2
 
 phases:
-  install:
-    runtime-versions:
-      python: 3.10
-    commands:
-      - apt-get update
-      - apt-get install -y docker.io
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 944697335072.dkr.ecr.us-east-1.amazonaws.com
-      
   build:
     commands:
-      - echo Building Docker image...
-      - docker build -t jinecr:b15ddb1377ca9e0598ef20d3fc91f3f4f99e209b .
-      - docker tag jinecr:b15ddb1377ca9e0598ef20d3fc91f3f4f99e209b jinecr:latest
-      - echo Pushing Docker images...
-      - docker push jinecr:b15ddb1377ca9e0598ef20d3fc91f3f4f99e209b
-      - docker push jinecr:latest
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t jinecr .
+      - docker tag jinecr:latest 944697335072.dkr.ecr.us-east-1.amazonaws.com/jinecr:latest
   post_build:
     commands:
       - echo Build completed on `date`
-      
+      - echo Pushing the Docker image to ECR...
+      - docker push 944697335072.dkr.ecr.us-east-1.amazonaws.com/jinecr:latest
 artifacts:
   files:
     - '**/*'
+  base-directory: '/app'
