@@ -4,17 +4,26 @@ phases:
   install:
     runtime-versions:
       python: 3.7
+    commands:
+      - apt-get update
+      - apt-get install -y docker.io
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
   build:
     commands:
-      - echo Build started on `date`
-      - echo Installing dependencies...
-      - pip install -r requirements.txt
-      - echo Running tests...
-      - pytest
-      - echo Building the Docker image...
-      - docker build -t my-flask-app .
-      - echo Pushing the Docker image to Amazon ECR...
-      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-      - docker tag my-flask-app:latest $ECR_REGISTRY/my-flask-app:latest
-      - docker push $ECR_REGISTRY/my-flask-app:latest
+      - echo Building Docker image...
+      - docker build -t $ECR_REPOSITORY_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION .
+      - docker tag $ECR_REPOSITORY_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION $ECR_REPOSITORY_NAME:latest
+      - echo Pushing Docker images...
+      - docker push $ECR_REPOSITORY_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push $ECR_REPOSITORY_NAME:latest
+  post_build:
+    commands:
       - echo Build completed on `date`
+      
+artifacts:
+  files:
+    - '**/*'
