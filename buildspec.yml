@@ -20,4 +20,4 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: 'C:/Users/USER/Desktop/d'
+  base-directory: 'https://github.com/kimjinmin4535/eew.git'
