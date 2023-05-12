@@ -11,15 +11,16 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
+      - $(aws ecr get-login --region us-east-1 --no-include-email)
       
   build:
     commands:
       - echo Building Docker image...
-      - docker build -t $ECR_REPOSITORY_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION .
-      - docker tag $ECR_REPOSITORY_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION $ECR_REPOSITORY_NAME:latest
+      - docker build -t jinecr:b15ddb1377ca9e0598ef20d3fc91f3f4f99e209b .
+      - docker tag jinecr:b15ddb1377ca9e0598ef20d3fc91f3f4f99e209b jinecr:latest
       - echo Pushing Docker images...
-      - docker push $ECR_REPOSITORY_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
-      - docker push $ECR_REPOSITORY_NAME:latest
+      - docker push jinecr:b15ddb1377ca9e0598ef20d3fc91f3f4f99e209b
+      - docker push jinecr:latest
   post_build:
     commands:
       - echo Build completed on `date`
